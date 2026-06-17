@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: cineverse-postgres
+    environment:
+      POSTGRES_DB: cineverse
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cineverse-network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: cineverse-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - cineverse-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: cineverse-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - cineverse-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: cineverse-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - cineverse-network
+
+  auth-service:
+    build: ./backend/auth-service
+    container_name: cineverse-auth
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cineverse
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: CineVerseSecretKeyForJWTTokenGeneration2024SecureAndLongEnoughKey
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    networks:
+      - cineverse-network
+
+  movie-service:
+    build: ./backend/movie-service
+    container_name: cineverse-movies
+    environment:
+      MONGO_URI: mongodb://admin:admin@mongodb:27017/cineverse?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - cineverse-network
+
+  booking-service:
+    build: ./backend/booking-service
+    container_name: cineverse-booking
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: cineverse
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - cineverse-network
+
+  gateway:
+    build: ./backend/gateway
+    container_name: cineverse-gateway
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      MOVIE_SERVICE_URL: http://movie-service:8082
+      BOOKING_SERVICE_URL: http://booking-service:8083
+      JWT_SECRET: CineVerseSecretKeyForJWTTokenGeneration2024SecureAndLongEnoughKey
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - movie-service
+      - booking-service
+    networks:
+      - cineverse-network
+
+  frontend:
+    build: ./frontend
+    container_name: cineverse-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
+    networks:
+      - cineverse-network
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+  rabbitmq_data:
+
+networks:
+  cineverse-network:
+    driver: bridge

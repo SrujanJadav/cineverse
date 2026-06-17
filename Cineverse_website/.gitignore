@@ -1,0 +1,38 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+target/
+
+# Build
+dist/
+build/
+*.class
+
+# Docker
+.docker/
+
+# Misc
+.cache/
+temp/
+tmp/

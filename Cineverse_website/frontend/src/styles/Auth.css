@@ -1,0 +1,131 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 20px 40px;
+  background: linear-gradient(135deg, #141414 0%, #1f1f1f 100%);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 450px;
+}
+
+.auth-card {
+  padding: 40px;
+}
+
+.auth-title {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #e50914 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+}
+
+.auth-form {
+  margin-bottom: 20px;
+}
+
+.auth-form .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-form .btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.auth-link {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 20px;
+}
+
+.auth-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+  color: var(--secondary-color);
+}
+
+.forgot-password-link {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.forgot-password-link a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link a:hover {
+  color: var(--primary-color);
+}
+
+.role-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.role-option {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: var(--bg-secondary);
+}
+
+.role-option.selected {
+  border-color: var(--primary-color);
+  background-color: rgba(229, 9, 20, 0.1);
+}
+
+.role-option:hover {
+  border-color: var(--primary-color);
+}
+
+.role-option h4 {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.role-option p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+
+  .auth-title {
+    font-size: 28px;
+  }
+
+  .role-selector {
+    flex-direction: column;
+  }
+}
