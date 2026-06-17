@@ -10,7 +10,7 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
             allowedMethods:
               - GET
               - POST
@@ -20,12 +20,21 @@ spring:
             allowedHeaders: "*"
             exposedHeaders:
               - Authorization
+            allowCredentials: false
       
       routes:
-        - id: auth-service
+        # Match both /api/auth/** (from frontend) and /auth/** (direct)
+        - id: auth-service-api
           uri: ${AUTH_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+
+        - id: auth-service-direct
+          uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/auth/**
           filters:
             - StripPrefix=0
         
