@@ -23,20 +23,21 @@ spring:
             allowCredentials: false
       
       routes:
-        # Frontend calls /auth/** → rewrite to /api/auth/** on auth service
-        - id: auth-service-api
-          uri: ${AUTH_SERVICE_URL:http://localhost:8081}
-          predicates:
-            - Path=/api/auth/**
-          filters:
-            - StripPrefix=0
-
+        # Frontend calls /auth/** → rewrite to /api/auth/**
         - id: auth-service-direct
           uri: ${AUTH_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/auth/**
           filters:
-            - RewritePath=/auth/(?<segment>.*), /api/auth/${segment}
+            - RewritePath=/auth/(?<segment>.*), /api/auth/$\{segment}
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+        - id: auth-service-api
+          uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
         
         - id: movie-service
           uri: ${MOVIE_SERVICE_URL:http://localhost:8082}
